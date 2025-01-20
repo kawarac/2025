@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.1 170.08">
+<defs>
+    <pattern id="myPattern"
+            x="0.6" y="0.6" width="4" height="4" patternUnits="userSpaceOnUse" >
+    <!-- start pattern-->
+        <circle cx="0.6" cy="0.6" r="0.6" style="stroke: none; fill: whitesmoke" />
+    <!-- end pattern -->
+    </pattern>
+    <style>.cls-1{fill:url(#myPattern);}</style></defs>
+<g id="レイヤー_2" data-name="レイヤー 2"><g id="レイヤー_2-2" data-name="レイヤー 2">
+<path class="cls-1" d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+</g></g>
+</svg>
