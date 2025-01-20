@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D | Hayashi Kohei</title>
+    <link rel="stylesheet" href="css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="img/00_favicon_darkgreen_white.svg">
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+          }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="loading_3D">
+        <p>loading...</p>
+    </div>
+    <header>
+        <h1><a href="index.html"><img class="logo" src="img/00_logo_darkgreen.svg" alt="HOME"></a></h1>
+        <nav>
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="works.html">Works</a></li>
+                <li><a href="play.html">Play !!</a></li>
+                <li><a href="scenes.html">Scenes</a></li>
+                <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="img/instagram_logo_darkgreen.svg" alt="instagram"></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="WebGL-output"></div>
+
+    <div class="caption2">
+        <div class="scroll">
+            <h2 class="name_jp"></h2>
+            <p class="name_en"></p>
+            <p class="date small"></p>
+            <p class="place small"></p>
+            <p class="material small"></p>
+            <p class="tool small"></p>
+            <p class="info small"></p>
+            <br>
+            <p class="comment"></p>
+            <a class="link1"></a>
+            <a class="link2"></a>
+        </div>
+    </div>
+
+    <footer>
+        <p class="small">&copy 2025 Kohei Hayashi</p>
+    </footer>
+
+
+    <script>
+        var element = document.createElement('script')
+        element.setAttribute('src', 'js/three_caption.js?ver=' + new Date().getTime())
+        document.getElementsByTagName("body")[0].appendChild(element)
+    </script>
+</body>
+</html>

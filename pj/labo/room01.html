@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM01 | Kohei Hayashi</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+
+            <!-- <div class="page-title">
+                <a href="room0.html">◀</a>
+                <h1><small>ROOM1</small></h1>
+                <a href="room2.html">▶</a>
+            </div> -->
+        </div>
+
+        <nav>
+            <ul class="main-nav">
+                <li><a href=../../about.html>ABOUT</a></li>
+                <li><a href=../../object/index.html>OBJECT</a></li>
+                <li><a href=../../words/index.html>WORDS</a></li>
+                <li><a class="highlight" href=../../pj/index.html>CODE</a></li>
+                <!-- <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../../img/instagram_logo.svg" alt="instagram"></a></li> -->
+            </ul>
+        </nav>
+    </header>
+    <div class="header-space"></div>
+
+    <div id="WebGL-output">
+    </div>
+
+    <main>
+        <h1>00</h1>
+        <section>
+          <h2>scroll</h2>
+        </section>
+        <section>
+          <h2>01</h2>
+          <p>box</p>
+        </section>
+        <section>
+          <h2>02</h2>
+          <p>box</p>
+        </section>
+        <section>
+          <h2>03</h2>
+          <p>box</p>
+        </section>
+  
+        <section>
+          <h2>bottom</h2>
+          <p>04</p>
+          <p>05</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="page-title">
+            <a href="index.html">◀</a>
+            <h1>ROOM01</h1>
+            <a href="room02.html">▶</a>
+        </div>
+        <p><small>&copy 2023 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../../node_modules/three/build/three.module.js",
+                "GLTFLoader": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+                "OrbitControls": "../../node_modules/three/examples/jsm/controls/OrbitControls.js"
+              }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+
+        let scene;
+        let camera;
+        let renderer;
+        let model;
+
+        scene = new THREE.Scene();
+        
+        camera = new THREE.OrthographicCamera(window.innerWidth / -150, window.innerWidth / 150, window.innerHeight / 150, window.innerHeight / -150, -200, 500);
+        camera.position.set(0, 1.5, 10);
+        // camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true
+            });
+            renderer.setClearColor(new THREE.Color(0xddf5ee));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+        const hemisphereLight = new THREE.HemisphereLight(0x333333, 0xffffff, 5);
+        hemisphereLight.position.set(0.5, 1, 0.75)
+        scene.add(hemisphereLight);
+
+        // const dirLight = new THREE.DirectionalLight(0xffffff,0.5);
+        // dirLight.position.set(10, 10, 10);
+        // dirLight.castShadow = true;
+        // dirLight.shadow.mapSize.set(2048, 2048);
+        // scene.add(dirLight);
+
+        const loader = new GLTFLoader();
+     
+        loader.load('../../assets/gltf/kumonosu_light3-1.glb', function(gltf) {
+            model = gltf.scene;
+            model.position.x = -5;
+            model.position.y = -1.5;
+            // model.rotation.y =Math.PI;
+            gltf.scene.traverse((model) => {
+                model.castShadow = true;
+                model.receiveShadow = false;
+            });
+            gltf.scene.traverse((model) => {
+                if(model.isMesh){
+                    model.material = new THREE.MeshLambertMaterial({
+                    opacity: 0.9, color: 0x888888, transparent: false});
+                }
+            });
+            scene.add(model);
+        }, undefined, function(e) {
+            console.error(e);
+        });
+
+            loader.load('../../assets/gltf/kirikae.glb', function(gltf) {
+                model = gltf.scene;
+                model.position.x = 0;
+                model.position.y = -1.5;
+                model.rotation.y = Math.PI;
+                gltf.scene.traverse((model) => {
+                if(model.isMesh){
+                    model.material = new THREE.MeshLambertMaterial({
+                    opacity: 0.9, color: 0x888888, transparent: false});
+                }
+            });
+                scene.add(model);
+            }, undefined, function(e) {
+                console.error(e);
+            });
+
+            loader.load('../../assets/gltf/example1.glb', function(gltf) {
+                model = gltf.scene;
+                model.position.x = 0.9;
+                model.position.y = -1.5;
+                model.rotation.y = Math.PI;
+                gltf.scene.traverse((model) => {
+                if(model.isMesh){
+                    model.material = new THREE.MeshLambertMaterial({
+                    opacity: 0.9, color: 0x888888, transparent: false});
+                }
+            });
+                scene.add(model);
+            }, undefined, function(e) {
+                console.error(e);
+            });
+
+            loader.load('../../assets/gltf/example5.glb', function(gltf) {
+                model = gltf.scene;
+                model.position.x = -1.2;
+                model.position.y = -1.5;
+                model.rotation.y = Math.PI;
+                gltf.scene.traverse((model) => {
+                if(model.isMesh){
+                    model.material = new THREE.MeshLambertMaterial({
+                    opacity: 0.9, color: 0x888888, transparent: false});
+                }
+            });
+                scene.add(model);
+            }, undefined, function(e) {
+                console.error(e);
+            });
+
+        function lerp(x, y, a) {
+            return (1 - a) * x + a * y;
+        }
+
+        function scalePercent(start, end) {
+            return (scrollPercent - start) / (end - start);
+        }
+
+        const animationScripts = [];
+
+        animationScripts.push({
+            start: 0,
+            end: 40,
+            function() {
+                camera.lookAt(new THREE.Vector3(0,0,0));
+                camera.position.x = lerp(0, 10, scalePercent(0, 40));
+                camera.position.y = lerp(1.5, 12, scalePercent(0, 40));
+                camera.position.z = lerp(10, 20, scalePercent(0, 40));
+            }
+        })
+
+        // animationScripts.push({
+        //     start: 20,
+        //     end: 40,
+        //     function() {
+        //         camera.lookAt(scene.position);
+        //         camera.position.x = lerp(10, 50, scalePercent(20, 40));
+        //         camera.position.y = lerp(12, 100, scalePercent(20, 40));
+        //         camera.position.z = lerp(20, 10, scalePercent(20, 40));
+        //     }
+        // })
+
+        function playScrollAnimation() {
+            animationScripts.forEach((animation) => {
+                if (scrollPercent >= animation.start && scrollPercent < animation.end) {
+                    animation.function();
+                }
+            });
+        }
+
+        let scrollPercent = 0;
+
+        document.body.onscroll = () => {
+            //現在のスクロールの進捗をパーセントで計算する
+            scrollPercent =
+                (document.documentElement.scrollTop /
+                (document.documentElement.scrollHeight -
+                    document.documentElement.clientHeight)) *
+                100;
+            console.log(document.documentElement.scrollTop); //一番上からの距離
+            console.log(document.documentElement.scrollHeight); //5029
+            console.log(document.documentElement.clientHeight); //927
+            console.log(scrollPercent); //0~100%で取得
+        };
+
+        const tick = () => {
+            window.requestAnimationFrame(tick);
+            playScrollAnimation();
+            renderer.render(scene, camera);
+        };
+
+        tick();        
+
+        renderer.render(scene, camera);
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+</script>
+    
+
+</body>
+</html>

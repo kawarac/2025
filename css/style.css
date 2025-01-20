@@ -1,0 +1,374 @@
+/*-------------------------------共通部分------------------------------*/
+
+#canvas {
+    position: fixed;
+    height: 100vh;
+    width : 100vw;
+    left: 0;
+    z-index: 9990;
+}
+/* @font-face {
+    font-family: myfont;
+    src: url(../asset/fonts/WIP_MARKS1_1.otf);
+  } */
+
+body {
+    /* background-color: darkslategray; */
+    background-color: #e5e5e5;
+    color: darkgreen;
+    font-family: "Noto Sans JP";
+    text-align: justify;
+    letter-spacing: 0.15rem;
+    line-height: 1.8rem;
+}
+h1 img{
+    height: 35px;
+}
+h2 {
+    margin-top: 0;
+    margin-bottom: 1.4rem;
+    font-size: 1.4em;
+}
+h3 {
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    font-size: 1.2em;
+}
+p {
+    margin: 20px 0;
+}
+a {
+    color: darkgreen;
+    /* mix-blend-mode: difference; */
+}
+li {
+    list-style: none;
+}
+.small {
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+}
+header {
+    position: fixed;
+    top: 0;
+    margin-left: 5%;
+    margin-top: 2%;
+    z-index: 9999;
+}
+footer {
+    position: fixed;
+    bottom: 0;
+    margin-left: 5%;
+    margin-bottom: 2%;
+    display: flex;
+    flex-direction: column;
+}
+img {
+    max-height: 100%;
+    max-width: 100%;
+}
+.sns_logo {
+    /* line-height: 100%; */
+    /* padding: 0; */
+    height: 20px;
+    width: 20px;
+  }
+
+.wrapper {
+    margin: auto;
+    max-width: 1500px;
+    /* width: 100%; */
+}
+
+.wrapper2 {
+    margin: 150px 5% 5% 23%;
+    /* width: calc(65%-150px); */
+}
+
+.loading {
+    position: fixed;
+    z-index: 9997;
+    background-color: #e5e5e5;
+    /* background-color: rgb(202, 173, 138); */
+    height: calc(100% - 150px);
+    width: calc(70vw);
+    max-width: 1050px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: 1px dashed black; */
+    border: 1px dashed darkgreen;
+    font-size: small;
+    pointer-events: none;
+  }
+
+.loading_3D {
+  position: fixed;
+  z-index: 9997;
+  /* background-color: #e5e5e5; */
+  /* background-color: rgb(202, 173, 138); */
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 1px dashed black; */
+  border: 1px dashed darkgreen;
+  font-size: small;
+  pointer-events: none;
+}
+  .loading p .loading_3D p {
+    font-size: small;
+  }
+  
+  .loaded {
+    opacity: 0;
+    /* transition: 0.5s; */
+    pointer-events: none;
+  }
+
+.flex {
+    display: flex;
+}
+
+
+
+
+/* --------------------------js動作の一覧-------------------------------- */
+
+.container1, .container2, .container3, .container4, .container5 {
+    gap: 20px;
+    padding: 0;
+    width: 100%;
+    display:flex;
+    flex-wrap: wrap;
+    /* justify-content:center; */
+}
+
+.item1, .item2, .item3, .item4, .item5 {
+    /* border: solid #000000 1px; */
+    width: 24svh;
+    min-width: 24svh;
+    height: 32svh;
+    position: relative;
+    font-size: small;
+    z-index: 9997;
+    
+}
+.item-name1, .item-name2, .item-name3, .item-name4, .item-name5 {
+  position: absolute;
+  top: 50%;;
+  left: 50%;
+  margin: auto;
+  width: 105%;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: #e5e5e5;
+  z-index: 9995;
+  opacity: 0;
+}
+.item-name1:hover, .item-name2:hover, .item-name3:hover, .item-name4:hover, .item-name5:hover {
+  opacity: 1;
+}
+.item-img1 .item-img2 {
+    position: absolute;
+    object-fit: contain;
+}
+.item-href1 .item-href2 {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.js-base {
+    display: none;
+  }
+
+.card {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    min-height: calc(90svh - 150px);
+}
+.imgwindow {
+    width: 60%;
+}
+/* .smallimg {
+    margin-top: 30px;
+    height: 120px;
+    width: 100%;
+    display: flex;
+    overflow-x: scroll;
+}
+.smallimg img{
+    margin-right: 10px;
+} */
+.txtwindow {
+    width: 40%;
+}
+.txtwindow p {
+    margin: 0;
+}
+
+
+.bl_imgSwitcher {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.bl_imgSwitcher_main {
+    aspect-ratio: 1;
+  
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit:contain;
+    }
+  }
+.bl_imgSwitcher_thumb {
+display: flex;
+gap: 0 1%;
+margin-top: 5%;
+}
+
+.bl_imgSwitcher_btn {
+  width: 25%;
+  overflow: hidden;
+  /* border-radius: 20px; */
+  border: none;
+  background: none;
+  padding: 10px;
+  position: relative;
+
+  &::before {
+    content: "";
+    border-radius: inherit;
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    transition: background-color .4s;
+  }
+
+  img {
+    /* width: 100%; */
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+}
+
+.bl_imgSwitcher_btn.is_active::before {
+  border: 1px dashed black;
+}
+
+.haslink {
+    position: absolute;
+    height: 20px;
+    z-index: 9999;
+    right: 0;
+    transform: translate(-100%, 50%) rotateZ(0deg);
+    opacity: 0;
+}
+
+
+/* -----------------------------3Dページ----------------------------------- */
+
+.caption2 {
+    position: fixed;
+    z-index: 9996;
+    height: 20vh;
+    width: 55vw;
+    bottom: 0;
+    right: 0;
+    transform: translate(-5vw, -7vh);
+    /* box-shadow: 0 0 0 1px #f5f5f5 inset; */
+    padding: 5px;
+    /* margin-bottom: 10vh; */
+    /* background-color: rgb(255 255 255/ 50%); */
+  }
+  .caption2 a {
+    text-decoration: underline;
+  }
+  .caption2 h1 {
+    margin: 0;
+  }
+  .caption2 h3 {
+    text-align: end;
+    }
+  .caption2 p {
+    /* line-height: 1.2rem; */
+    /* font-family: serif; */
+    /* font-weight: lighter; */
+    margin:0 10px 0 0;
+    text-align: justify;
+  }
+  .scroll {
+    /* position: fixed;
+    z-index: 8; */
+    height: 100%;
+    width: 100%;
+    /* transform: translate(55vw, 20vh); */
+    /* box-shadow: 0 0 0 1px #384e36 inset; */
+    overflow: auto;
+    /* overflow-wrap: break-word; */
+    padding: 0 5px 0 0;
+  }
+  .scroll::-webkit-scrollbar{
+    width: 1.5px;
+  }
+  .scroll::-webkit-scrollbar-thumb{
+    background-color: darkgreen;
+  }
+
+
+
+
+
+
+/* ----------------------------aboutページ-------------------------*/
+
+/* .right {
+    position: absolute;
+    right: 0;
+} */
+
+
+.right50 {
+    display: flex;
+    justify-content:right;
+    align-items: center;
+}
+.left50 {
+    display: flex;
+    justify-content:left;
+}
+.dwgs {
+    width: 100%;
+    display: flex;
+    justify-content: right;
+}
+.dwgs img {
+    min-width: 0;
+    max-height: 50vh;
+    object-fit: contain;
+}
+
+@media (max-width: 1000px) {
+    body {
+        font-size: small;
+        letter-spacing: 0.1rem;
+        line-height: 1.5rem;
+    }
+    .right50 {
+        flex-direction: column;
+    }
+    .dwgs {
+        flex-direction: column;
+    }
+    .card {
+        flex-direction: column;
+    }
+    .imgwindow, .txtwindow {
+        width: 100%;
+    }
+}

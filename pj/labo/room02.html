@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM02 | Kohei Hayashi</title><!--Replace-->
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <!-- <div class="loading">
+        <img src="../../img/00_favicon_pattern.svg" alt="loading">
+    </div> -->
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+        </div>
+
+        <nav>
+            <ul class="main-nav">
+                <li><a href=../../about.html>ABOUT</a></li>
+                <li><a href=../../object/index.html>OBJECT</a></li>
+                <li><a href=../../words/index.html>WORDS</a></li>
+                <li><a class="highlight" href=../../pj/index.html>CODE</a></li>
+                <!-- <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../../img/instagram_logo.svg" alt="instagram"></a></li> -->
+            </ul>
+        </nav>
+    </header>
+
+    <div id="WebGL-output">
+    </div>
+
+    <footer>
+        <div class="page-title"> <!--Replace-->
+            <a href="room01.html">◀</a>
+            <h1>ROOM02</h1>
+            <a href="room03.html">▶</a>
+        </div>
+        <p><small>&copy 2023 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../../node_modules/three/build/three.module.js",
+                "GLTFLoader": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+                "TrackballControls": "../../node_modules/three/examples/jsm/controls/TrackballControls.js"
+              }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+        import { TrackballControls } from "TrackballControls";
+
+        let camera;
+        let scene;
+        let scene2;
+        let renderer;
+        let model;
+        let controls;
+        let pointer = new THREE.Vector2();
+        let raycaster = new THREE.Raycaster();
+
+        let lampSwitch = true;
+        let doorOpen = false;
+        let broken = false;
+        let daytime = true;
+        
+            //シーンの作成
+            scene = new THREE.Scene();
+            scene2 = new THREE.Scene();
+
+            //レンダラー
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true
+            });
+            // renderer.setClearColor(new THREE.Color(0xbbbbbb));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // renderer.setPixelRatio(1.5);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            // renderer.gammaInput = true;
+            // renderer.gammaOutput = true;
+            renderer.phisicallyCorrectLights = true;
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+     
+            //カメラの作成
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            //カメラセット
+            camera.position.set(-7, 0, 2);
+            
+            // controls
+            controls = new TrackballControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+            controls.rotateSpeed = 3;
+            controls.zoomSpeed = 0.3;
+            // controls.enablePan = false;
+            controls.maxDistance = 50;
+            controls.target = new THREE.Vector3(0, 1, 0);
+            // controls.minDistance = 0.5;
+            // controls.autoRotate = true;
+            // controls.autoRotateSpeed = 0.8;
+
+            scene.fog = new THREE.Fog(0X000000, 5, 30);
+     
+            
+            const manager = new THREE.LoadingManager();
+            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onLoad = function ( ) {
+                const loading = document.querySelector(".loading");
+                loading.classList.add("loaded");
+                // progressBarContainer.style.display = 'none';
+                console.log( 'Loading complete!');
+            };
+            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+                // progressBar.value = (itemsLoaded/itemsTotal) * 100;
+                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onError = function ( url ) {
+                console.log( 'There was an error loading ' + url );
+            };
+     
+            //glbファイルの読み込み
+            const loader = new GLTFLoader(manager);
+
+
+
+            const createSprite = (texture, scale, position) => {
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.scale.set(scale.x, scale.y, scale.z);
+                sprite.position.set(position.x, position.y, position.z);
+                scene.add(sprite);
+            };
+
+            const createCanvasForTexture = (canvasWidth, canvasHeight, text, fontSize) => {
+                // 貼り付けるcanvasを作成。
+                const canvasForText = document.createElement('canvas');
+                const ctx = canvasForText.getContext('2d');
+                ctx.canvas.width = canvasWidth; // 小さいと文字がぼやける
+                ctx.canvas.height = canvasHeight; // 小さいと文字がぼやける 
+                // 透過率80%のオレンジ
+                ctx.fillStyle = 'rgba(255, 100, 0, 0)';
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#f5f5f5';
+                ctx.font = `${fontSize}px san-serif`;
+                ctx.fillText(
+                    text,
+                    // x方向の余白/2をx方向開始時の始点とすることで、横方向の中央揃えをしている。
+                    (canvasWidth - ctx.measureText(text).width) / 2,
+                    // y方向のcanvasの中央に文字の高さの半分を加えることで、縦方向の中央揃えをしている。
+                    canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
+                );
+                return canvasForText;
+            };
+
+
+            const canvasTexture = new THREE.CanvasTexture(
+                createCanvasForTexture(500, 500, 'Hello World!', 60)
+            );
+            const scaleMaster = 1;
+            createSprite(
+                canvasTexture,
+                {
+                    x: scaleMaster,
+                    y: scaleMaster,
+                    z: scaleMaster,
+                },
+                { x: 0, y: 1.2, z: 0 }
+            );
+            const material = new THREE.LineBasicMaterial( { color: 0xffaa00 } );
+            const points = [];
+            points.push( new THREE.Vector3( 0, 0, 0 ) );
+            points.push( new THREE.Vector3( 0, 1, 0 ) );
+            points.push( new THREE.Vector3( 10, 5, 0 ) );
+
+            const geometry = new THREE.BufferGeometry().setFromPoints( points );
+            const line = new THREE.Line( geometry, material );
+            scene.add( line );
+
+            
+
+            const sphere1Geometry = new THREE.SphereGeometry(0.05, 9, 6);
+            const sphere1Material = new THREE.MeshBasicMaterial({color: '#fff'})
+            const sphere1 = new THREE.Mesh(sphere1Geometry, sphere1Material);
+            sphere1.position.set(0, 0, 0);
+            // sphere1.castShadow = true;
+            // sphere1.visible = false;
+            sphere1.name = 'sphere1';
+            scene.add(sphere1);
+
+            const sphere2Geometry = new THREE.SphereGeometry(0.05, 9, 6);
+            const sphere2Material = new THREE.MeshBasicMaterial({color: '#ffaa00'})
+            const sphere2 = new THREE.Mesh(sphere2Geometry, sphere2Material);
+            sphere2.position.set(0, 1, 0);
+            // sphere2.castShadow = true;
+            // sphere2.visible = false;
+            sphere2.name = 'sphere2';
+            scene.add(sphere2);
+
+            const sphere3Geometry = new THREE.SphereGeometry(0.05, 9, 6);
+            const sphere3Material = new THREE.MeshBasicMaterial({color: '#ffaa00'})
+            const sphere3 = new THREE.Mesh(sphere3Geometry, sphere3Material);
+            sphere3.position.set(10, 5, 0);
+            // sphere3.castShadow = true;
+            // sphere3.visible = false;
+            sphere3.name = 'sphere3';
+            scene.add(sphere3);
+
+            const sunGeometry = new THREE.SphereGeometry(1, 9, 6);
+            const sunMaterial = new THREE.MeshBasicMaterial({color: '#fff', wireframe: true})
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            sun.position.set(10, 5, 0);
+            // sphere.castShadow = true;
+            // sphere.visible = false;
+            sun.name = 'sun';
+            scene.add(sun);
+
+            window.addEventListener( 'mousedown', onDocumentMouseDown);
+            function onDocumentMouseDown( event ) {
+            event.preventDefault();
+
+            // calculate pointer position in normalized device coordinates
+            // (-1 to +1) for both components   
+            pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+            // update the picking ray with the camera and pointer position
+            raycaster.setFromCamera( pointer, camera );
+            // calculate objects intersecting the picking ray
+            const intersects = raycaster.intersectObjects(scene.children);
+                // for ( let i = 0; i < intersects.length; i ++ ) {
+                //     intersects[ i ].object.material.color.set( 0x00ffff );
+                // }
+                if (intersects.length > 0){
+                    console.log(intersects[0].object.name);
+                    if (intersects[0].object.name == 'w001_3' ||
+                        intersects[0].object.name == 'w002_3' ||
+                        intersects[0].object.name == 'w003_3' ||
+                        intersects[0].object.name == 'w004_3' ||
+                        intersects[0].object.name == 'w005_3' ||
+                        intersects[0].object.name == 'w006_3' ||
+                        intersects[0].object.name == 'w007_3' 
+                    ){
+                        // addplate();
+                        if (lampSwitch  == false){
+                            model.children[20].getObjectByName( 'w001' ).rotation.z =  - Math.PI / 2.32; model.getObjectByName( 'a001' ).visible =  true;
+                            setTimeout(() => { model.children[20].getObjectByName( 'w002' ).rotation.z =  - Math.PI / 2.32; model.getObjectByName( 'a002' ).visible =  true; }, 100)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w003' ).rotation.x =  Math.PI - Math.PI / 2.32; model.getObjectByName( 'a003' ).visible =  true; }, 200)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w004' ).rotation.x =  Math.PI - Math.PI / 2.32; model.getObjectByName( 'a004' ).visible =  true; }, 300)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w005' ).rotation.x =  Math.PI - Math.PI / 2.32; model.getObjectByName( 'a005' ).visible =  true; }, 400)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w006' ).rotation.z =  Math.PI / 2.32; model.getObjectByName( 'a006' ).visible =  true; }, 500)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w007' ).rotation.z =  Math.PI / 2.32; model.getObjectByName( 'a007' ).visible =  true; }, 600)
+                            setTimeout(() => { 
+                                lampSwitch = true;
+                                sphere.visible = true;
+                                light.visible = true;
+                                light2.visible = true;
+                             }, 700)
+
+                        }else{
+                            lampSwitch = false;
+                            sphere.visible = false;
+                            light.visible = false;
+                            light2.visible = false;
+                            setTimeout(() => { model.children[20].getObjectByName( 'w001' ).rotation.z =  0; model.getObjectByName( 'a001' ).visible =  false; }, 100)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w002' ).rotation.z =  0; model.getObjectByName( 'a002' ).visible =  false; }, 200)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w003' ).rotation.x =  Math.PI; model.getObjectByName( 'a003' ).visible =  false; }, 300)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w004' ).rotation.x =  Math.PI; model.getObjectByName( 'a004' ).visible =  false; }, 400)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w005' ).rotation.x =  Math.PI; model.getObjectByName( 'a005' ).visible =  false; }, 500)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w006' ).rotation.z =  0; model.getObjectByName( 'a006' ).visible =  false; }, 600)
+                            setTimeout(() => { model.children[20].getObjectByName( 'w007' ).rotation.z =  0; model.getObjectByName( 'a007' ).visible =  false; }, 700)
+                        }
+                    } else if (intersects[0].object.name == 'd001_3' ||
+                            intersects[0].object.name == 'd002_3' ||
+                            intersects[0].object.name == 'd003' ||
+                            intersects[0].object.name == 'd004'
+                    ){
+                        if (doorOpen == false){
+                            model.children[20].getObjectByName( 'd001' ).rotation.z =  - Math.PI / 3;
+                            model.children[20].getObjectByName( 'd002' ).rotation.z =  Math.PI / 3;
+                            model.getObjectByName( 'd003' ).visible =  false;
+                            model.getObjectByName( 'd004' ).visible =  false;
+                            doorOpen = true;
+                        }else{
+                            model.children[20].getObjectByName( 'd001' ).rotation.z =  0;
+                            model.children[20].getObjectByName( 'd002' ).rotation.z =  0;
+                            model.getObjectByName( 'd003' ).visible =  true;
+                            model.getObjectByName( 'd004' ).visible =  true;
+                            doorOpen = false;
+                        }
+                    } else if (intersects[0].object.name == 'JS4_5_70'){
+                        model.getObjectByName( 's' ).position.y =  -5;
+                        model.getObjectByName( 'b' ).position.y =  -5;
+                        model.getObjectByName( 'f' ).position.y =  -0.8;
+                        model.getObjectByName( 'r1' ).position.y =  1;
+                        model.getObjectByName( 'r2' ).position.y =  1.5;
+                        model.getObjectByName( 'r3001' ).position.y =  3;
+                        model.getObjectByName( 'r3002' ).position.y =  3.2;
+                        model.getObjectByName( 'r3003' ).position.y =  3.3;
+                        model.getObjectByName( 'r3004' ).position.y =  3.4;
+                        model.getObjectByName( 'r3005' ).position.y =  3.5;
+                        model.getObjectByName( 'w001' ).position.x =  2;
+                        model.getObjectByName( 'w002' ).position.x =  2;
+                        model.getObjectByName( 'a001' ).position.x =  2;
+                        model.getObjectByName( 'a002' ).position.x =  2;
+                        model.getObjectByName( 'd001' ).position.x =  2;
+                        model.getObjectByName( 'w003' ).position.z =  3;
+                        model.getObjectByName( 'w004' ).position.z =  3;
+                        model.getObjectByName( 'w005' ).position.z =  3;
+                        model.getObjectByName( 'a003' ).position.z =  2;
+                        model.getObjectByName( 'a004' ).position.z =  2;
+                        model.getObjectByName( 'a005' ).position.z =  2;
+                        model.getObjectByName( 'w006' ).position.x =  -3;
+                        model.getObjectByName( 'w007' ).position.x =  -3;
+                        model.getObjectByName( 'a006' ).position.x =  -2;
+                        model.getObjectByName( 'a007' ).position.x =  -2;
+                        model.getObjectByName( 'd002' ).position.x =  -3;
+                        model.getObjectByName( 'd003' ).position.z =  -2;
+                        model.getObjectByName( 'd004' ).position.z =  -2;
+                        scene.getObjectByName( 'kumonosu_shikichi_threejs' ).visible = false;
+                        scene.getObjectByName( 'JS4_5_70' ).visible = false;
+                        scene.getObjectByName( 'sphere' ).visible = false;
+                        scene.getObjectByName( 'sun' ).visible = false;
+                        controls.autoRotate = true;
+                        renderer.setClearColor(new THREE.Color(0x000000));
+                        broken = true;
+                        scene.overrideMaterial = new THREE.MeshBasicMaterial({
+                            opacity: 0.9, color: 0xffffff, transparent: true,});
+
+                    } else if (intersects[0].object.name == 'sun'){
+                        if (daytime == true){
+                            dirLight.visible = false;
+                            dirLight2.visible = false;
+                            daytime = false;
+                            renderer.setClearColor(new THREE.Color(0x000000));
+
+                        } else {
+                            dirLight.visible = true;
+                            dirLight2.visible = true;
+                            daytime = true;
+                            renderer.setClearColor(new THREE.Color(0xbbbbbb));
+                        }
+                    }
+                }
+                
+        }
+
+        let frame = 0;
+        
+        function animate() {
+            scene2.traverse(function (obj) {
+                if (obj instanceof THREE.Mesh == true){
+                    obj.rotation.y += (-1 + 2 * Math.random()) * 0.05;
+                }
+            })
+
+            // scene2.traverse(function (obj) {
+            //     if (obj instanceof THREE.Mesh == true){
+            //         obj.rotation.y += Math.sign(-1 + 2 * Math.random()) * 0.01;
+            //     }
+            // })
+            requestAnimationFrame(animate);
+
+            frame++;
+            if (frame % 2 == 0) {
+                return;
+            }
+
+            // const delta = clock.getDelta();
+            controls.update();
+            
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', onWindowResize);
+ 
+        function onWindowResize() {
+        renderer.setSize(window.innerWidth, window.innerHeight); // レンダラーのサイズをれサイズ対応
+        camera.aspect = window.innerWidth / window.innerHeight; // カメラのアスペクト比をリサイズ対応
+        camera.updateProjectionMatrix(); // カメラを更新した際に呼び出す必要がある
+        }
+     
+    </script>
+</body>
+</html>

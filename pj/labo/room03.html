@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM03 | Kohei Hayashi</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo" alt="HOME">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../works.html">Works</a></li>
+                <li><a href="index_3d.html">Play !!</a></li>
+                <li><a href="../scenes.html">Scenes</a></li>
+                <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../img/instagram_logo_darkgreen.svg" alt="instagram"></a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div id="WebGL-output">
+    </div>
+
+    <footer>
+        <p><small>&copy 2025 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "../../node_modules/three/build/three.module.js"
+          }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+
+        var camera;
+        var scene;
+        var renderer;
+    
+        // once everything is loaded, we run our Three.js stuff.
+        function init() {
+    
+            var stats = initStats();
+    
+            // create a scene, that will hold all our elements such as objects, cameras and lights.
+            scene = new THREE.Scene();
+    
+            // create a camera, which defines where we're looking at.
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
+            // create a render and set the size
+            renderer = new THREE.WebGLRenderer();
+    
+            renderer.setClearColor(new THREE.Color(0xfd7e00));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+    
+            // create the ground plane
+            var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+            var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.receiveShadow = true;
+    
+            // rotate and position the plane
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.x = 15;
+            plane.position.y = 0;
+            plane.position.z = 0;
+    
+            // add the plane to the scene
+            scene.add(plane);
+    
+            // create a cube
+            var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+            var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+            var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            cube.castShadow = true;
+    
+            // position the cube
+            cube.position.x = -4;
+            cube.position.y = 3;
+            cube.position.z = 0;
+    
+            // add the cube to the scene
+            scene.add(cube);
+    
+            var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+            var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+            var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    
+            // position the sphere
+            sphere.position.x = 20;
+            sphere.position.y = 0;
+            sphere.position.z = 2;
+            sphere.castShadow = true;
+    
+            // add the sphere to the scene
+            scene.add(sphere);
+    
+            // position and point the camera to the center of the scene
+            camera.position.x = -50;
+            camera.position.y = 30;
+            camera.position.z = 30;
+            camera.lookAt(scene.position);
+    
+            // add subtle ambient lighting
+            var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+            scene.add(ambientLight);
+    
+            // add spotlight for the shadows
+            var spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(-20, 30, -5);
+            spotLight.castShadow = true;
+            scene.add(spotLight);
+    
+            // add the output of the renderer to the html element
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+    
+            scene.fog = new THREE.Fog(0Xfd7e00, 0.15, 100);
+
+            // call the render function
+            var step = 0;
+    
+            var controls = new function () {
+                this.rotationSpeed = 0.02;
+                this.bouncingSpeed = 0.03;
+            };
+    
+            // var gui = new dat.GUI();
+            // gui.add(controls, 'rotationSpeed', 0, 0.5);
+            // gui.add(controls, 'bouncingSpeed', 0, 0.5);
+    
+            renderScene();
+    
+            function renderScene() {
+                // stats.update();
+                // rotate the cube around its axes
+                cube.rotation.x += controls.rotationSpeed;
+                cube.rotation.y += controls.rotationSpeed;
+                cube.rotation.z += controls.rotationSpeed;
+    
+                // bounce the sphere up and down
+                step += controls.bouncingSpeed;
+                sphere.position.x = 20 + ( 10 * (Math.cos(step)));
+                sphere.position.y = 2 + ( 10 * Math.abs(Math.sin(step)));
+    
+                // render using requestAnimationFrame
+                requestAnimationFrame(renderScene);
+                renderer.render(scene, camera);
+            }
+    
+            function initStats() {
+    
+                // var stats = new Stats();
+    
+                // stats.setMode(0); // 0: fps, 1: ms
+    
+                // Align top-left
+                // stats.domElement.style.position = 'absolute';
+                // stats.domElement.style.left = '0px';
+                // stats.domElement.style.top = '0px';
+    
+                // document.getElementById("Stats-output").appendChild(stats.domElement);
+    
+                // return stats;
+            }
+        }
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    
+        window.onload = init;
+    
+        window.addEventListener('resize', onResize, false);
+    
+    </script>
+
+
+</body>
+</html>

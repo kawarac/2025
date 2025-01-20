@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM05 | Kohei Hayashi</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <!-- <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        .page-header {
+            z-index: 0;
+        }
+    </style> -->
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+        </div>
+
+        <nav>
+            <ul class="main-nav">
+                <li><a href=../../about.html>ABOUT</a></li>
+                <li><a href=../../object/index.html>OBJECT</a></li>
+                <li><a href=../../words/index.html>WORDS</a></li>
+                <li><a class="highlight" href=../../pj/index.html>CODE</a></li>
+                <!-- <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../../img/instagram_logo.svg" alt="instagram"></a></li> -->
+            </ul>
+        </nav>
+    </header>
+    
+    <div id="WebGL-output">
+    </div>
+
+    <footer>
+        <div class="page-title"> <!--Replace-->
+            <a href="room04.html">◀</a>
+            <h1>ROOM05</h1>
+            <a href="room06.html">▶</a>
+        </div>
+        <p><small>&copy 2023 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../../node_modules/three/build/three.module.js",
+                "GLTFLoader": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+                "PointerLockControls": "../../node_modules/three/examples/jsm/controls/PointerLockControls.js"
+              }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+        import { PointerLockControls } from "PointerLockControls";
+
+        //pointerlockcontrol from here
+        let moveForward = false;
+        let moveBackward = false;
+        let moveLeft = false;
+        let moveRight = false;
+
+        const velocity = new THREE.Vector3();
+        const direction = new THREE.Vector3();
+        //to here
+    
+
+        let camera;
+        let scene;
+        let renderer;
+        let model;
+     
+        
+            //シーンの作成
+            scene = new THREE.Scene();
+     
+            //カメラの作成
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            //カメラセット
+            camera.position.set(-5, 0, -5);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            
+             // controls
+            const controls = new PointerLockControls(camera, document.body);
+            window.addEventListener( 'click', () => {
+                controls.lock();
+            } );
+     
+            //光源
+            const dirLight = new THREE.DirectionalLight(0xffffff,0.5);//color,強度
+            dirLight.position.set(10, 10, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.set(2048, 2048);
+            scene.add(dirLight);
+
+            const light = new THREE.SpotLight(0xffffff,0.2);//color,強度
+            light.angle = Math.PI/2.5
+            light.position.set(0, 1.6, 0);
+            light.castShadow = true;
+            light.shadow.mapSize.set(4096, 4096);
+            light.penumbra = 0.5;
+            scene.add(light);            
+
+            const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x222222, 0.4);
+            hemisphereLight.position.set(0.5, 1, 0.75)
+            scene.add(hemisphereLight);
+
+            // const helper1 = new THREE.DirectionalLightHelper( dirLight, 5 );
+            // scene.add( helper1 );
+            // const helper2 = new THREE.DirectionalLightHelper( light, 5 );
+            // scene.add( helper2 );
+
+            // scene.fog = new THREE.Fog(0Xffffff, 1, 10);
+            scene.overrideMaterial = new THREE.MeshLambertMaterial({
+                opacity: 0.9, color: 0xffffff, transparent: false});
+     
+            //レンダラー
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true
+            });
+            renderer.setClearColor(new THREE.Color(0xcccccc));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+     
+            //glbファイルの読み込み
+            const loader = new GLTFLoader();
+     
+            loader.load('../../assets/gltf/kumonosu_light2-1.glb', function(gltf) {
+                model = gltf.scene;
+                model.position.y = -1.5;
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            }, undefined, function(e) {
+                console.error(e);
+            });
+            
+            // loader.load('../../assets/gltf/example3.glb', function(gltf) {
+            //     model = gltf.scene;
+            //     model.position.x = 10;
+            //     model.position.y = -1.5;
+            //     model.rotation.y = Math.PI;
+            //     scene.add(model);
+            // }, undefined, function(e) {
+            //     console.error(e);
+            // });
+
+            // loader.load('../../assets/gltf/example1.glb', function(gltf) {
+            //     model = gltf.scene;
+            //     model.position.x = 10.9;
+            //     model.position.y = -1.5;
+            //     model.rotation.y = Math.PI;
+            //     scene.add(model);
+            // }, undefined, function(e) {
+            //     console.error(e);
+            // });
+
+            // loader.load('../../assets/gltf/example5.glb', function(gltf) {
+            //     model = gltf.scene;
+            //     model.position.x = 8.8;
+            //     model.position.y = -1.5;
+            //     model.rotation.y = Math.PI;
+            //     scene.add(model);
+            // }, undefined, function(e) {
+            //     console.error(e);
+            // });
+
+            
+
+             // create the ground plane
+            const planeGeometry = new THREE.PlaneGeometry(400, 400, 100, 100);
+            const planeMaterial = new THREE.MeshLambertMaterial({
+                color: 0xaaaaaa,
+                // wireframe: true,
+            });
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+            // rotate and position the plane
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.y = -1.5;
+            plane.receiveShadow = true;
+
+            // add the plane to the scene
+            scene.add(plane);
+        
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);        
+
+        //pointerlockcontrols from here
+        const onKeyDown = (e) => {
+            switch (e.code) {
+                case 'ArrowUp':
+                case "KeyW":
+                    moveForward = true;
+                    break;
+                case 'ArrowLeft':
+                case "KeyA":
+                    moveLeft = true;
+                    break;
+                case 'ArrowDown':
+                case "KeyS":
+                    moveBackward = true;
+                    break;
+                case 'ArrowRight':
+                case "KeyD":
+                    moveRight = true;
+                    break;
+            }
+        };
+        const onKeyUp = (e) => {
+            switch (e.code) {
+                case 'ArrowUp':
+                case "KeyW":
+                    moveForward = false;
+                    break;
+                case 'ArrowLeft':
+                case "KeyA":
+                    moveLeft = false;
+                    break;
+                case 'ArrowDown':
+                case "KeyS":
+                    moveBackward = false;
+                    break;
+                case 'ArrowRight':
+                case "KeyD":
+                    moveRight = false;
+                    break;
+            }
+        };
+
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keyup", onKeyUp);
+        //to here
+
+        let prevTime = performance.now();
+     
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = performance.now();
+
+            //前後判定
+            direction.z = Number(moveForward) - Number(moveBackward);
+            direction.x = Number(moveRight) - Number(moveLeft);
+
+            //ポインターがonになったら
+            if (controls.isLocked) {
+                const delta = (time - prevTime) / 1000;
+
+                //減衰
+                velocity.z -= velocity.z * 10 * delta;
+                velocity.x -= velocity.x * 10 * delta;
+
+                if (moveForward || moveBackward) {
+                    velocity.z -= direction.z * 50 * delta;
+                }
+                if (moveRight || moveLeft) {
+                    velocity.x -= direction.x * 50 * delta;
+                }
+
+                controls.moveForward(-velocity.z * delta);
+                controls.moveRight(-velocity.x * delta);
+            }
+
+            prevTime = time;
+
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', onWindowResize);
+ 
+        function onWindowResize() {
+        renderer.setSize(window.innerWidth, window.innerHeight); // レンダラーのサイズをれサイズ対応
+        camera.aspect = window.innerWidth / window.innerHeight; // カメラのアスペクト比をリサイズ対応
+        camera.updateProjectionMatrix(); // カメラを更新した際に呼び出す必要がある
+        }
+     
+    </script>
+
+</body>
+</html>

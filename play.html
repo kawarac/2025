@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play !! | Kohei Hayashi</title>
+    <link rel="stylesheet" href="css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="img/00_favicon_darkgreen_white.svg">
+</head>
+
+<body>
+    <div class="loading_3D">
+        <p>loading...</p>
+    </div>
+    <header style="user-select: none;">
+        <h1><a href="index.html"><img class="logo" src="img/00_logo_darkgreen.svg" alt="HOME"></a></h1>
+        <nav>
+            <ul>
+                <li><a href="about.html">About</a></li>
+                <li><a href="works.html">Works</a></li>
+                <li><a href="play.html">Play !!</a></li>
+                <li><a href="scenes.html">Scenes</a></li>
+                <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="img/instagram_logo_darkgreen.svg" alt="instagram"></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="WebGL-output"></div>
+
+    <div class="caption2" style="height: fit-content; width:fit-content; text-align: end; pointer-events: none; user-select: none;">
+        <!-- <a href="kumonosu.html"><small>docs ⇗</small></a> -->
+        <div class="scroll">
+            <h1>Play !!</h1>
+            <p>
+                Doubleclick to see detail.
+            </p>
+        </div>
+    </div>
+
+    <footer style="user-select: none;">
+        <p class="small">&copy 2025 Kohei Hayashi</p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/",
+            "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@2/lib/three-vrm.module.min.js"
+          }
+        }
+    </script>
+
+    <script type="module">
+
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+        import { BVHLoader } from 'three/addons/loaders/BVHLoader.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+        import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+
+        let model;
+        let amigumo;
+        let controls;
+        let cube;
+        let plane;
+        let clock = new THREE.Clock();
+        let mixer = null;
+        let mixer2;
+        const actions = [];
+        let pointer = new THREE.Vector2();
+        let raycaster = new THREE.Raycaster();
+        
+        const scene = new THREE.Scene();
+
+        const renderer = new THREE.WebGLRenderer({ 
+            alpha: true,
+            antialias: true,
+            logarithmicDepthBuffer: true
+        });
+        // renderer.setClearColor(new THREE.Color(0xe5e5e5));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        // renderer.setPixelRatio(1.5);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+        const camera = new THREE.OrthographicCamera( window.innerWidth / - 80, window.innerWidth / 80, window.innerHeight / 80, window.innerHeight / - 80, 0.1, 1000 );
+        camera.position.y = 80;
+        camera.position.x = 80;
+        camera.position.z = -80;
+        // camera.lookAt(new THREE.Vector3(0, 1, 0));
+            
+             // 滑らかにカメラコントローラーを制御する
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.2;
+            controls.minZoom = 0.5;
+            controls.maxZoom = 3;
+            // controls.enableZoom = false;
+            controls.zoomSpeed = 0.5;
+            controls.minPolarAngle = Math.PI / 3;
+            controls.maxPolarAngle = Math.PI / 3;
+            controls.minAzimuthAngle = 0.75 * Math.PI
+            controls.maxAzimuthAngle = 0.75 * Math.PI
+            controls.mouseButtons = {
+                LEFT: THREE.MOUSE.PAN,
+                MIDDLE: THREE.MOUSE.DOLLY,
+                RIGHT: THREE.MOUSE.PAN
+            }
+            controls.touches = {
+                ONE: THREE.TOUCH.PAN,
+                TWO: THREE.TOUCH.DOLLY_ROTATE
+            }
+            // controls.enableRotate = false;
+            // controls.autoRotate = true;
+            // controls.screenSpacePanning = false;
+            // controls.zoomToCursor = true;
+            controls.target = new THREE.Vector3(0, 8, 0);
+            // controls.screenSpacePanning = true;
+     
+            //光源
+            const dirLight = new THREE.DirectionalLight(0xffffff,2.5);
+            dirLight.position.set(4, 15, 6);
+            dirLight.castShadow = true;
+            dirLight.shadow.camera.right = 20;
+            dirLight.shadow.camera.left = -40;
+            dirLight.shadow.camera.top = -40;
+            dirLight.shadow.camera.bottom = 20;
+            dirLight.shadow.camera.far = 50;
+            // dirLight.shadow.mapSize.set(2048, 2048);
+            dirLight.shadow.mapSize.set(1024, 1024);
+            scene.add(dirLight);
+
+            // const dirLight2 = new THREE.DirectionalLight(0xfd7e00,1);
+            // dirLight2.position.set(-2, -1, 2);
+            // dirLight2.castShadow = true;
+            // dirLight2.shadow.mapSize.set(4096, 4096);
+            // scene.add(dirLight2);
+
+            // const helper = new THREE.DirectionalLightHelper( dirLight, 1 );
+            // scene.add( helper );
+
+            const hemisphereLight = new THREE.HemisphereLight(0x555555, 0xffffff, 1);
+            hemisphereLight.position.set(5, 10, 7.5)
+            scene.add(hemisphereLight);
+
+            scene.overrideMaterial = new THREE.MeshStandardMaterial({
+                color: '#fff',
+                emissive: '#333',
+                roughness: 1,
+                metalness: 0.2,
+            });
+
+            // const gridHelper = new THREE.GridHelper( 72, 9, 0xffffff, 0x000000);
+            // gridHelper.position.set(-8, 0, 8);
+			// scene.add( gridHelper );
+
+            
+            const manager = new THREE.LoadingManager();
+            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onLoad = function ( ) {
+                const loading = document.querySelector(".loading_3D");
+                loading.classList.add("loaded");
+                // progressBarContainer.style.display = 'none';
+                console.log( 'Loading complete!');
+            };
+            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+                // progressBar.value = (itemsLoaded/itemsTotal) * 100;
+                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onError = function ( url ) {
+                console.log( 'There was an error loading ' + url );
+            };
+
+            // helpers
+			// const gridHelper = new THREE.GridHelper( 100, 100, 0xff0000, 0xff0000 );
+			// scene.add( gridHelper );
+
+			// const axesHelper = new THREE.AxesHelper( 5 );
+			// scene.add( axesHelper );
+
+            //glbファイルの読み込み
+            const loader = new GLTFLoader(manager);
+
+            loader.register((parser) => {
+                return new VRMLoaderPlugin(parser);
+            });
+     
+            loader.load('assets/gltf/kirikae.glb', function(gltf) {
+                model = gltf.scene;
+                model.rotation.y = Math.PI;
+                model.position.set(-16, 0, 16);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+
+                mixer2 = new THREE.AnimationMixer(model);
+                gltf.animations.forEach(animation => {
+                    actions.push(mixer2.clipAction(animation).play());
+                })
+            }, 
+            undefined, function(e) {
+                console.error(e);
+            });
+
+            loader.load('assets/gltf/kanban2_plane.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = Math.PI;
+                model.position.set(8, 0.73, 0);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/kumonosu_light3-1.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = Math.PI;
+                model.position.set(0, 0, 0);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/fifth_test_joined_dec05.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = Math.PI;
+                model.position.set(-24, 0, 16);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/kitime_joined.glb', function(gltf) {
+                model = gltf.scene;
+                model.rotation.y = - Math.PI / 3;
+                model.position.set(-16, 0, 8);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/JS4_5_70.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = -0.25 * Math.PI;
+                model.position.set(0, 1, 8);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                model.scale.x = 30;
+                model.scale.y = 30;
+                model.scale.z = 30;
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/amigumo.glb', function(gltf) {
+                amigumo = gltf.scene;
+                // model.rotation.y = -0.25 * Math.PI;
+                amigumo.position.set(-8, 1, 8);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                amigumo.scale.x = 30;
+                amigumo.scale.y = 30;
+                amigumo.scale.z = 30;
+                scene.add(amigumo);
+            });
+
+            loader.load('assets/gltf/stand_joined.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = Math.PI / 2;
+                model.position.set(-8, 0, 0);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                model.scale.x = 3;
+                model.scale.y = 3;
+                model.scale.z = 3;
+                scene.add(model);
+            });
+
+            loader.load('assets/gltf/Apollo_Lunar_Module2_dec05.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.x = Math.PI / 2;
+                model.position.set(-8, 0, 16);
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                // model.scale.x = 30;
+                // model.scale.y = 30;
+                // model.scale.z = 30;
+                scene.add(model);
+            });
+
+            // const loader2 = new FBXLoader(manager);
+            // loader2.load('../../assets/fbx/Gateway.FBX', function(object) {
+            //     object.scale.set(0.001, 0.001, 0.001);
+            //     object.position.set(3.4, 0.4, 3.5);
+            //     object.rotation.y = Math.PI;
+            //     object.traverse((model) => {
+            //         model.castShadow = true;
+            //         model.receiveShadow = true;
+            //     });
+            //     scene.add(object);
+            // }, undefined, function(e) {
+            //     console.error(e);
+            // });
+
+            // create the ground plane
+            const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1);
+            const planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+            plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.receiveShadow = true;
+    
+            // rotate and position the plane
+            plane.rotation.x = -0.5 * Math.PI;
+    
+            // add the plane to the scene
+            scene.add(plane);
+
+            const geometry = new THREE.BoxGeometry(0.3,0.3,0.3);
+            const material = new THREE.MeshPhongMaterial({color:0xFFFFFF});
+            cube = new THREE.Mesh(geometry,material);
+            cube.position.set(-16, 1, 24);
+            cube.castShadow = true;
+            scene.add(cube);
+            cube.name = 'cubeanimation';
+
+            //font
+            // const fontLoader = new FontLoader();
+            // fontLoader.load("node_modules/three/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+            // // console.log("font loaded");
+            // // console.log(font);
+            // const textGeometry = new TextGeometry("Doubleclick Any Objects.", {
+            //     font: font,
+            //     size: 0.6,
+            //     height: 0.05,
+            //     curveSegments: 5,
+            //     bevelEnabled: true,
+            //     bevelThickness: 0.03,
+            //     bevelSize: 0.02,
+            //     bevelOffset: 0,
+            //     bevelSegments: 4,
+            // });
+            // textGeometry.center();
+
+            // const textMaterial = new THREE.MeshNormalMaterial();
+            // const text = new THREE.Mesh(textGeometry, textMaterial);
+            // text.rotation.y = Math.PI;
+            // text.position.set(-1, 0, 0);
+            // scene.add(text);
+            // });
+        
+
+            let currentVrm = undefined;
+
+            loader.load("assets/vrm/man_for_vrm2.vrm", (gltf) => {
+                // retrieve a VRM instance from gltf
+                const vrm = gltf.userData.vrm;
+                // calling these functions greatly improves the performance
+				VRMUtils.removeUnnecessaryVertices( gltf.scene );
+				VRMUtils.removeUnnecessaryJoints( gltf.scene );
+
+                // Disable frustum culling
+				vrm.scene.traverse( ( obj ) => {
+                obj.frustumCulled = false;
+                } );
+
+                vrm.scene.position.set(0, -0.07, -8);
+                vrm.scene.rotation.y = Math.PI / 2;
+                vrm.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+
+                // add the loaded vrm to the scene
+                scene.add(vrm.scene);
+                currentVrm = vrm;
+
+                // BVHの読み込み
+                const loader = new BVHLoader();
+                loader.load("assets/bvh/15_01.bvh", function (bvh) {
+                // AnimationClipの生成
+                const clip = createClip(vrm, bvh);
+
+                // AnimationMixerの生成
+                mixer = new THREE.AnimationMixer(vrm.scene);
+                mixer.clipAction(clip).setEffectiveWeight(1.0).play();
+                });
+
+                // deal with vrm features
+                console.log(vrm);
+                
+                // vrm.expressionManager.setValue('relaxed', 1.0);
+                // vrm.expressionManager.setValue( 'aa', 1.0);
+                // vrm.humanoid.getNormalizedBoneNode( 'leftUpperArm' ).rotation.z = 1.1;
+                // vrm.humanoid.getNormalizedBoneNode( 'rightUpperArm' ).rotation.z = -1.1;
+            },
+
+            // called while loading is progressing
+            (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
+
+            // called when loading has errors
+            (error) => console.error(error),
+            );
+
+        let lastTime = new Date().getTime();
+        let frame = 0;
+    
+        function animate() {
+
+            cube.rotation.x += 0.05;
+            cube.rotation.y += 0.02;
+            cube.rotation.z += 0.01;
+
+            if(amigumo) amigumo.getObjectByName( 'a' ).rotation.y +=  - 0.004;
+            if(amigumo) amigumo.getObjectByName( 'a_ring1' ).rotation.y +=  - 0.004;
+            if(amigumo) amigumo.getObjectByName( 'a_ring2' ).rotation.y +=  - 0.004;
+
+            if(amigumo) amigumo.getObjectByName( 'b' ).rotation.y += 0.004;
+            if(amigumo) amigumo.getObjectByName( 'b_ring1' ).rotation.y += 0.004;
+            if(amigumo) amigumo.getObjectByName( 'b_ring2' ).rotation.y += 0.004;
+
+            if(amigumo) amigumo.rotation.x += 0.0010;
+
+            requestAnimationFrame(animate);
+
+            frame++;
+            if (frame % 2 == 0) {
+                return;
+            }
+
+            let time = new Date().getTime();
+            if (mixer) mixer.update(time - lastTime);
+            lastTime = time;
+
+            const deltaTime = clock.getDelta();
+            if ( currentVrm ) {
+			const s = Math.sin( Math.PI * clock.elapsedTime );
+			// currentVrm.expressionManager.setValue( 'aa', 0.5 + 0.5 * s );
+			currentVrm.expressionManager.setValue( 'blinkLeft', 0.5 - 0.5 * s );
+			currentVrm.expressionManager.setValue( 'blinkRight', 0.5 - 0.5 * s );
+            currentVrm.update( deltaTime );
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+            // mixer2.update(deltaTime);
+
+        }
+        animate();
+
+
+        // トラックの取得
+        function findTrack(name, tracks) {
+            for (let i = 0; i < tracks.length; i++) {
+                if (tracks[i].name == name) return tracks[i];
+            }
+            return null;
+        }
+
+        // 配列をQuaternionに変換
+        function values2quaternion(values, i) {
+            return new THREE.Quaternion(
+                values[i * 4],
+                values[i * 4 + 1],
+                values[i * 4 + 2],
+                values[i * 4 + 3]
+            );
+        }
+
+        // キーリストの生成
+        function createKeys(id, tracks) {
+            const posTrack = findTrack(".bones[" + id + "].position", tracks);
+            const rotTrack = findTrack(".bones[" + id + "].quaternion", tracks);
+
+            const keys = [];
+            const rate = 0.012; // サイズの調整
+            for (let i = 0; i < posTrack.times.length; i++) {
+                const key = {};
+
+                // 時間
+                key["time"] = parseInt(posTrack.times[i] * 1000);
+
+                // 回転
+                if (id == "rButtock" || id == "lButtock") {
+                    const id2 = id == "rButtock" ? "rThigh" : "lThigh";
+                    let q1 = values2quaternion(rotTrack.values, i);
+                    const rotTrack2 = findTrack(".bones[" + id2 + "].quaternion", tracks);
+                    q1.multiply(values2quaternion(rotTrack2.values, i));
+                    key["rot"] = [-q1.x, q1.y, -q1.z, q1.w];
+                } else {
+                    key["rot"] = [
+                        -rotTrack.values[i * 4],
+                        rotTrack.values[i * 4 + 1],
+                        -rotTrack.values[i * 4 + 2],
+                        rotTrack.values[i * 4 + 3],
+                    ];
+                }
+
+                // 位置
+                if (id == "hip") {
+                    key["pos"] = [
+                        -posTrack.values[i * 3] * rate,
+                        posTrack.values[i * 3 + 1] * rate,
+                        -posTrack.values[i * 3 + 2] * rate,
+                    ];
+                }
+                keys.push(key);
+            }
+            if (keys.length == 0) return null;
+            return keys;
+        }
+
+        // クリップの生成
+        function createClip(vrm, bvh) {
+            // ボーンリストの生成
+            const nameList = [
+                'head',
+                'neck',
+                'chest',
+                'spine',
+                'hips',
+                'rightShoulder',
+                'rightUpperArm',
+                'rightLowerArm',
+                'rightHand',
+                'leftShoulder',
+                'leftUpperArm',
+                'leftLowerArm',
+                'leftHand',
+                'rightUpperLeg',
+                'rightLowerLeg',
+                'rightFoot',
+                'leftUpperLeg',
+                'leftLowerLeg',
+                'leftFoot',
+            ];
+            const idList = [
+                "head",
+                "neck",
+                "chest",
+                "abdomen",
+                "hip",
+                "rCollar",
+                "rShldr",
+                "rForeArm",
+                "rHand",
+                "lCollar",
+                "lShldr",
+                "lForeArm",
+                "lHand",
+                "rButtock",
+                "rShin",
+                "rFoot",
+                "lButtock",
+                "lShin",
+                "lFoot",
+            ];
+            const bones = nameList.map((boneName) => {
+                return vrm.humanoid.getNormalizedBoneNode(boneName);
+            });
+
+            // AnimationClipの生成
+            const hierarchy = [];
+            for (let i = 0; i < idList.length; i++) {
+                const keys = createKeys(idList[i], bvh.clip.tracks);
+                if (keys != null) {
+                    hierarchy.push({ keys: keys });
+                }
+            }
+            const clip = THREE.AnimationClip.parseAnimation(
+                { hierarchy: hierarchy },
+                bones
+            );
+
+            // トラック名の変更
+            clip.tracks.some((track) => {
+                track.name = track.name.replace(
+                /^\.bones\[([^\]]+)\].(position|quaternion|scale)$/,
+                "$1.$2"
+                );
+            });
+            return clip;
+        }
+
+        window.addEventListener( 'dblclick', onDocumentMouseDown);
+        function onDocumentMouseDown( event ) {
+            event.preventDefault();
+
+            // calculate pointer position in normalized device coordinates
+            // (-1 to +1) for both components   
+            pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+            // update the picking ray with the camera and pointer position
+            raycaster.setFromCamera( pointer, camera );
+            // calculate objects intersecting the picking ray
+            const intersects = raycaster.intersectObjects( scene.children);
+                // for ( let i = 0; i < intersects.length; i ++ ) {
+                //     intersects[ i ].object.material.color.set( 0x00ffff );
+                // }
+                if (intersects.length > 0){
+                    console.log(intersects[0].object.name);
+                    switch (intersects[0].object.name) {
+                        case 'example3':
+                        case 'example3001':
+                        case 'example3002':
+                        case 'example3003':
+                        case 'example3004':
+                        case 'example3005':
+                        case 'example3006':
+                        case 'example3007':
+                        case 'example3008':
+                        case 'example3009':
+                        case 'example3010':
+                        case 'example3011':
+                        case 'example3012':
+                        case 'example3013':
+                        case 'example3014':
+                        case 'example3015':
+                        case 'example3016':
+                            console.log('1');
+                            location.href = '3d.html?code=3d_colot';
+                            break;
+
+                        case 'kumonosu_f2156':
+                            console.log('2');
+                            location.href = '3d.html?code=3d_kumonosu';
+                            break;
+
+                        case 'サブロク看板1000':
+                            console.log('3');
+                            location.href = '3d.html?code=3d_ahiru';
+                            break;
+
+                        // case 'cubeanimation':
+                        // console.log('4');
+                        // location.href = '/pj/labo/room03.html';
+                        // break;
+
+                        case 'Mockup2_3D_whole004_1':
+                        case 'Mockup2_3D_whole004':
+                        case 'JS4_0_70':
+                        case 'JS4_3_70':
+                        case 'JS4_5_70':
+                        console.log('5');
+                        location.href = '3d.html?code=3d_kitime';
+                        break;
+
+                        case 'man_for_vrm2':
+                        console.log('6');
+                        location.href = '../about.html';
+                        break;
+
+                        case 'Apollo_Lunar_Module':
+                        console.log('7');
+                        location.href = '3d.html?code=3d_mth_lo';
+                        break;
+
+                        case 'a':
+                        case 'a_ring1':
+                        case 'a_ring2':
+                        case 'b':
+                        case 'b_ring1':
+                        case 'b_ring2':
+                        console.log('8');
+                        location.href = '3d.html?code=3d_amigumo';
+                        break;
+
+                        case 'a22':
+                        console.log('9');
+                        location.href = '3d.html?code=3d_stand';
+                        break;
+
+                        case '_____________3D001':
+                        case '_____________3D001_1':
+                        case '_____________3D001_2':
+                        case '_____________3D001_3':
+                        case '_____________3D001_4':
+                        console.log('10');
+                        location.href = '3d.html?code=3d_five';
+                        break;
+
+                        
+                    }
+                }
+        }
+        
+
+        window.addEventListener('resize', onWindowResize);
+ 
+        function onWindowResize() {
+            camera.left = -window.innerWidth / 200;
+            camera.right = window.innerWidth / 200;
+            camera.top = window.innerHeight /200;
+            camera.bottom = -window.innerHeight /200;
+
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        }
+     
+    </script>
+
+</body>
+</html>

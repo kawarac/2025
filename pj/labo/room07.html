@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM07 | Kohei Hayashi</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <div class="loading">
+        <img src="../../img/00_favicon_pattern.svg" alt="loading">
+    </div>
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+        </div>
+
+        <nav>
+            <ul class="main-nav">
+                <li><a href=../../about.html>ABOUT</a></li>
+                <li><a href=../../object/index.html>OBJECT</a></li>
+                <li><a href=../../words/index.html>WORDS</a></li>
+                <li><a class="highlight" href=../../pj/index.html>CODE</a></li>
+                <!-- <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../../img/instagram_logo.svg" alt="instagram"></a></li> -->
+            </ul>
+        </nav>
+    </header>
+
+    <div id="WebGL-output">
+    </div>
+
+    <footer>
+        <div class="page-title"> <!--Replace-->
+            <a href="room06.html">◀</a>
+            <h1>ROOM07</h1>
+            <a href="room08.html">▶</a>
+        </div>
+        <p><small>&copy 2023 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "../..//node_modules/three/build/three.module.js",
+            "GLTFLoader": "../..//node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+            "MapControls": "../../node_modules/three/examples/jsm/controls/OrbitControls.js"
+          }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+        import { MapControls } from "MapControls";
+     
+        let camera;
+        let scene;
+        let renderer;
+        let model;
+        let cube;
+        let controls;
+        // let mixer;
+        let clock = new THREE.Clock();
+        const actions = [];
+        // let pointer = new THREE.Vector2();
+        // let raycaster = new THREE.Raycaster();
+     
+        init();
+        animate();
+        
+        function init() {
+            //シーンの作成
+            scene = new THREE.Scene();
+
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true,
+                // logarithmicDepthBuffer: true
+            });
+            renderer.setClearColor(new THREE.Color(0xbbbbbb));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 10000);
+            camera.position.set(-2000, 500, -1000);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            
+            
+             // 滑らかにカメラコントローラーを制御する
+             controls = new MapControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.8;
+            controls.zoomSpeed = 0.2;
+            // controls.enablePan = false;
+            // controls.maxDistance = 50;
+            // controls.minDistance = 0.5;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.1;
+
+            
+            //光源
+            // const dirLight = new THREE.DirectionalLight(0xffffff,1);
+            // dirLight.position.set(50, -100, 10);
+            // dirLight.castShadow = true;
+            // dirLight.shadow.mapSize.set(2048, 2048);
+            // scene.add(dirLight);
+
+            const pointLight = new THREE.PointLight(0xffffff2,1);
+            pointLight.position.set(0,500, 0);
+            scene.add(pointLight);
+
+            // const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x222222, 0.5);
+            // hemisphereLight.position.set(5, 10, 7.5)
+            // scene.add(hemisphereLight);
+
+            // scene.overrideMaterial = new THREE.MeshLambertMaterial({
+            //     opacity: 0.9, color: 0xffffff, transparent: true});
+
+            const manager = new THREE.LoadingManager();
+            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onLoad = function ( ) {
+                const loading = document.querySelector(".loading");
+                loading.classList.add("loaded");
+                // progressBarContainer.style.display = 'none';
+                console.log( 'Loading complete!');
+            };
+            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+                // progressBar.value = (itemsLoaded/itemsTotal) * 100;
+                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+            manager.onError = function ( url ) {
+                console.log( 'There was an error loading ' + url );
+            };            
+
+            //glbファイルの読み込み
+            const loader = new GLTFLoader(manager);
+
+            loader.load('../../assets/gltf/osaka_2.glb', function(gltf) {
+                model = gltf.scene;
+                // model.rotation.y = Math.PI;
+                // model.position.y = 4;
+                model.position.x = -2000;
+                model.position.z = 0;
+                gltf.scene.traverse((model) => {
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                });
+                scene.add(model);
+            });
+
+            const geometry = new THREE.BoxGeometry(100,100,100);
+            const material = new THREE.MeshBasicMaterial({color:0xFFFFFF});
+            cube = new THREE.Mesh(geometry,material);
+            cube.position.set(0,500, 0);
+            scene.add(cube);
+            cube.name = 'cubeanimation';
+        }
+
+           
+        function animate() {
+
+            cube.rotation.x += 0.05;
+            cube.rotation.y += 0.02;
+            cube.rotation.z += 0.01;
+
+            // let frame;  
+            requestAnimationFrame(animate);
+            // frame++;
+            // if (frame % 2 == 0) {
+		    //     return;
+	        // }
+            const delta = clock.getDelta();
+            // mixer.update(delta);
+            controls.update();
+            renderer.render(scene, camera);
+        
+            window.addEventListener('resize', onWindowResize);
+            function onWindowResize() {
+                renderer.setSize(window.innerWidth, window.innerHeight); // レンダラーのサイズをれサイズ対応
+                camera.aspect = window.innerWidth / window.innerHeight; // カメラのアスペクト比をリサイズ対応
+                camera.updateProjectionMatrix(); // カメラを更新した際に呼び出す必要がある
+            }
+        }
+     
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>works > detail | Kohei Hayashi</title>
+    <link rel="stylesheet" href="css/sanitize.css">
+    <script>
+        var element = document.createElement('link')
+        element.setAttribute('rel', 'stylesheet')
+        element.setAttribute('href', 'css/style.css?ver=' + new Date().getTime())
+        document.getElementsByTagName("head")[0].appendChild(element)
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="img/00_favicon_darkgreen_white.svg">
+</head>
+<body>
+
+    <div class="wrapper">
+        <header>
+            <h1><a href="index.html"><img class="logo" src="img/00_logo_darkgreen.svg" alt="HOME"></a></h1>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="works.html">Works</a></li>
+                    <li><a href="play.html">Play !!</a></li>
+                    <li><a href="scenes.html">Scenes</a></li>
+                    <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="img/instagram_logo_darkgreen.svg" alt="instagram"></a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="wrapper2">
+            <div class="loading">
+                <p>loading...</p>
+            </div>
+            <div class="card">
+                <div class="imgwindow bl_imgSwitcher" id="js_imgSwitcher">
+                    <div class="bl_imgSwitcher_main">
+                        <img src="" alt="" loading="lazy" class="mainimg">
+                    </div>
+                    <div class="bl_imgSwitcher_thumb">
+                        <button class="bl_imgSwitcher_btn js-base" type="button"><img src="" class="thumbimg" loading="lazy"></button>
+                    </div>
+                </div>
+                <div class="txtwindow">
+                    <h2 class="name_jp"></h2>
+                    <p class="name_en"></p>
+                    <br>
+                    <p class="date small"></p>
+                    <p class="place small"></p>
+                    <p class="material small"></p>
+                    <p class="tool small"></p>
+                    <br>
+                    <p class="comment"></p>
+                    <a class="link1"></a>
+                    <a class="link2"></a>
+                </div>
+                
+            </div>
+        </div>
+        <footer>
+            <p class="small">&copy 2025 Kohei Hayashi</p>
+        </footer>
+
+        <script>
+            var element = document.createElement('script')
+            element.setAttribute('src', 'js/detail.js?ver=' + new Date().getTime())
+            document.getElementsByTagName("body")[0].appendChild(element)
+        </script>
+    </div>
+    
+
+    
+    
+    
+</body>
+</html>

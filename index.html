@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kohei Hayashi</title>
+    <link rel="stylesheet" href="css/sanitize.css">
+    <script>
+        var element = document.createElement('link')
+        element.setAttribute('rel', 'stylesheet')
+        element.setAttribute('href', 'css/style.css?ver=' + new Date().getTime())
+        document.getElementsByTagName("head")[0].appendChild(element)
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="img/00_favicon_darkgreen_white.svg">
+</head>
+<body>
+    <div id="canvas"></div>
+    <div class="wrapper">
+        <header>
+            <h1><a href="index.html"><img class="logo" src="img/00_logo_darkgreen.svg" alt="HOME"></a></h1>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="works.html">Works</a></li>
+                    <li><a href="play.html">Play !!</a></li>
+                    <li><a href="scenes.html">Scenes</a></li>
+                    <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="img/instagram_logo_darkgreen.svg" alt="instagram"></a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <footer>
+            <p class="small">&copy 2025 Kohei Hayashi</p>
+        </footer>
+    </div>
+    
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+          }
+        }
+      </script>
+    
+    <script type="module">
+        // import * as CANNON from "cannon-es";
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+        
+        let camera, scene, renderer, controls, world;
+        
+        // シーンの作成
+        scene = new THREE.Scene();
+        
+        // レンダラーの作成
+        renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById("canvas").appendChild(renderer.domElement);
+        
+        // カメラの作成
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 100);
+        camera.position.set(0, 0.25, 0.5);
+        
+        // コントロールの作成
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.7;
+        controls.zoomSpeed = 0.3;
+        controls.enablePan = false;
+        controls.target.set(0, 0.2, 0);
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1;
+        
+        // 光源の作成
+        const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0xffffff, 1.5); // ソフトな白色光
+        scene.add(hemisphereLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 2, 7.5);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 8192;
+        directionalLight.shadow.mapSize.height = 8192;
+        directionalLight.shadow.camera.near = 0.01;
+        directionalLight.shadow.camera.far = 10;
+        scene.add(directionalLight);
+        
+        // 物理ワールドの設定
+        // world = new CANNON.World();
+        // world.gravity.set(0, -0.0982, 0); // 重力を設定 (m/s²)
+        
+        // 接触材質の設定
+        // const cannonMaterial = new CANNON.Material();
+        // const contactMaterial = new CANNON.ContactMaterial(cannonMaterial, cannonMaterial, {
+        //     friction: 0.05,
+        //     restitution: 0.9,
+        // });
+        // world.addContactMaterial(contactMaterial);
+        
+        // 地面の静的平面の作成
+        // const groundBody = new CANNON.Body({
+        //     type: CANNON.Body.STATIC,
+        //     shape: new CANNON.Plane(),
+        //     material: cannonMaterial,
+        // });
+        // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0); // 上向きに設定
+        // world.addBody(groundBody);
+        
+        // STLファイルを一斉に読み込んで落下させる関数
+        function loadAndDropSTLFiles(filePaths) {
+            filePaths.forEach((filePath, index) => {
+                    const loader = new STLLoader();
+                    loader.load(filePath, function (geometry) {
+                        // スケールダウン
+                        geometry.scale(0.001, 0.001, 0.001);
+        
+                        const material = new THREE.MeshLambertMaterial({
+                            color: 0xffffff,
+                        });
+                        const stlMesh = new THREE.Mesh(geometry, material);
+                        stlMesh.castShadow = true; // メッシュが影を落とす
+                        stlMesh.receiveShadow = true;
+                        stlMesh.position.set(Math.random() * 0.4 - 0.2, 0.4 * Math.random(), Math.random() * 0.4 - 0.2); // ランダムな位置に設定
+                        stlMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI); // ランダムな位置に設定
+                        scene.add(stlMesh);
+        
+                        // // Cannon.jsの形状に変換
+                        // const vertices = [];
+                        // const faces = [];
+        
+                        // const position = geometry.attributes.position;
+                        // for (let i = 0; i < position.count; i++) {
+                        //     vertices.push(new CANNON.Vec3(position.getX(i), position.getY(i), position.getZ(i)));
+                        // }
+        
+                        // let index = geometry.index; // indexの宣言と初期化
+                        // if (index !== null) {
+                        //     for (let i = 0; i < index.count; i += 3) {
+                        //         faces.push([index.getX(i), index.getY(i), index.getZ(i)]);
+                        //     }
+                        // } else {
+                        //     for (let i = 0; i < position.count; i += 3) {
+                        //         faces.push([i, i + 1, i + 2]);
+                        //     }
+                        // }
+        
+                        // const shape = new CANNON.ConvexPolyhedron({ vertices, faces });
+                        // const stlBody = new CANNON.Body({
+                        //     mass: 0.00001, // kg
+                        //     shape: shape
+                        // });
+        
+                        // // 傾けた姿勢を設定
+                        // const quaternion = new CANNON.Quaternion();
+                        // quaternion.setFromAxisAngle(new CANNON.Vec3(Math.random(), Math.random(), Math.random()), Math.PI / 4); // 傾ける
+                        // stlBody.quaternion.copy(quaternion);
+        
+                        // stlBody.position.copy(stlMesh.position); // 初期位置を設定
+                        // world.addBody(stlBody);
+        
+                        // // メッシュに物理ボディを関連付ける
+                        // stlMesh.userData.physicsBody = stlBody;
+                    });
+            });
+        }
+        
+        // 読み込むSTLファイルのパスの配列
+        const stlFiles = [
+                'assets/stl/camera3wide_covered_f3.stl',
+                'assets/stl/camera3wide_covered_m3.stl',
+                'assets/stl/waku23_arduinouno3.stl',
+                'assets/stl/waku23_battery_switch2.stl',
+                'assets/stl/waku23_genericbreadboard2.stl',
+                'assets/stl/waku23_low2.stl',
+                'assets/stl/waku23_minibreadboards3_low.stl',
+                'assets/stl/waku23_raspi5_closed3.stl',
+                'assets/stl/waku23_sad101_3.stl',
+                'assets/stl/waku23_wall2.stl',
+            ];
+        
+        // STLファイルの読み込みと落下させる関数を呼び出す
+        loadAndDropSTLFiles(stlFiles);
+        
+        // // 地面メッシュの作成
+        // const groundGeometry = new THREE.PlaneGeometry(10, 10); // 大きめに設定
+        // const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+        // const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+        // groundMesh.rotation.x = -Math.PI / 2; // 上向きに設定
+        // groundMesh.position.y = -0.005;
+        // groundMesh.receiveShadow = true; // 地面が影を受け取る
+        // scene.add(groundMesh);
+        
+        // シミュレーションループの開始
+        function animate() {
+            requestAnimationFrame(animate);
+        
+            // 物理ワールドを進める
+            // world.step(1 / 10);
+        
+            // 各STLメッシュの位置とクォータニオンを更新
+            // scene.traverse(function (object) {
+            //     if (object instanceof THREE.Mesh && object !== groundMesh) {
+            //         const stlBody = object.userData.physicsBody;
+            //         if (stlBody) {
+            //             object.position.copy(stlBody.position);
+            //             object.quaternion.copy(stlBody.quaternion);
+            //         }
+            //     }
+            // });
+        
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+        </script>
+
+    
+    
+    
+</body>
+</html>

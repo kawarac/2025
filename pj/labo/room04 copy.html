@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROOM04 | Kohei Hayashi</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="title-box">
+            <a href="../../index.html">
+                <svg viewBox="0 0 396.85 170.08" class="logo">
+                <defs>
+                    <linearGradient id="gradient" gradientUnits="userSpaceOnUse">
+                        <stop id="stop1" offset="0%"/>
+                        <stop id="stop2" offset="100%"/>
+                    </linearGradient>
+                </defs>
+                <path d="M268.06,0H246.43a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.5,8.5,0,0,0,8.25,6.44h21.63a8.51,8.51,0,0,0,8.25-10.57L276.31,6.44A8.51,8.51,0,0,0,268.06,0Z"/>
+                <path d="M235,68.06c-2.15-8.59-14.35-8.59-16.5,0l-4.76,19a8.5,8.5,0,0,1-8.24,6.45,8.51,8.51,0,0,1-8.19-10.84l18-72.14A8.5,8.5,0,0,0,207.11,0H161.39a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h50a8.5,8.5,0,0,0,8.25-10.57Z"/>
+                <path d="M48.44,115.45A8.51,8.51,0,0,1,55.14,105,8.73,8.73,0,0,1,65,111.65l13,52a8.51,8.51,0,0,0,8.25,6.44h78.32a8.5,8.5,0,0,0,8.25-10.57L134.58,6.44A8.51,8.51,0,0,0,126.33,0H104.7a8.5,8.5,0,0,0-8.25,10.57l18,72.11a8.53,8.53,0,0,1-8.19,10.87,8.51,8.51,0,0,1-8.24-6.45L77.88,6.44A8.5,8.5,0,0,0,69.63,0H8.5A8.51,8.51,0,0,0,0,8.5V161.57a8.51,8.51,0,0,0,8.5,8.51H51.21a8.51,8.51,0,0,0,8.25-10.57Z"/>
+                <path d="M351.56,10.57l10.95,43.77a8.71,8.71,0,0,1-5.3,10.36,8.62,8.62,0,0,1-2.89.5,8.51,8.51,0,0,1-8.24-6.44L333,6.44A8.51,8.51,0,0,0,324.75,0H303.12a8.51,8.51,0,0,0-8.25,10.57l38.27,153.07a8.51,8.51,0,0,0,8.25,6.44h47a8.51,8.51,0,0,0,8.5-8.51V8.5a8.51,8.51,0,0,0-8.5-8.5H359.82A8.51,8.51,0,0,0,351.56,10.57Z"/>
+            </svg></a>
+        </div>
+
+        <nav>
+            <ul class="main-nav">
+                <li><a href=../../about.html>ABOUT</a></li>
+                <li><a href=../../object/index.html>OBJECT</a></li>
+                <li><a href=../../words/index.html>WORDS</a></li>
+                <li><a class="highlight" href=../../pj/index.html>CODE</a></li>
+                <!-- <li><a href="https://www.instagram.com/kawarac/"><img class="sns_logo" src="../../img/instagram_logo.svg" alt="instagram"></a></li> -->
+            </ul>
+        </nav>
+    </header>
+
+    <div id="WebGL-output">
+    </div>
+
+    <footer>
+        <div class="page-title"> <!--Replace-->
+            <a href="room03.html">◀</a>
+            <h1>ROOM04</h1>
+            <a href="room05.html">▶</a>
+        </div>
+        <p><small>&copy 2023 Kohei Hayashi</small></p>
+    </footer>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "../../node_modules/three/build/three.module.js",
+            "GLTFLoader": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+            "MapControls": "../../node_modules/three/examples/jsm/controls/OrbitControls.js",
+            "BVHLoader": "../../node_modules/three/examples/jsm/loaders/BVHLoader.js",
+            "@pixiv/three-vrm": "../../js/three-vrm.module.js"
+          }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+        import { MapControls } from "MapControls";
+        // import { BVHLoader } from "BVHLoader";
+        import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+
+        let model;
+        let controls;
+        let mixer;
+        let clock = new THREE.Clock();
+        const actions = [];
+        
+            const scene = new THREE.Scene();
+
+            const renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true,
+                logarithmicDepthBuffer: true
+            });
+            renderer.setClearColor(new THREE.Color(0x000000));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 10000);
+            camera.position.y = 0.5;
+            camera.position.z = -3;
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            
+             // 滑らかにカメラコントローラーを制御する
+            controls = new MapControls(camera, renderer.domElement);
+            // controls.enableDamping = true;
+            // controls.dampingFactor = 0.05;
+            // controls.rotateSpeed = 0.8;
+            // controls.zoomSpeed = 0.5;
+            // controls.enablePan = false;
+            // controls.maxDistance = 20;
+            // controls.minDistance = 0.5;
+            // controls.autoRotate = true;
+            // controls.autoRotateSpeed = 0.8;
+     
+            //光源
+            const dirLight = new THREE.DirectionalLight(0xffffff,1);
+            dirLight.position.set(0, 10, -10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.set(2048, 2048);
+            scene.add(dirLight);
+
+            // const dirLight2 = new THREE.DirectionalLight(0xfd7e00,0.5);
+            // dirLight2.position.set(2, 0, 1);
+            // dirLight2.castShadow = true;
+            // dirLight2.shadow.mapSize.set(4096, 4096);
+            // scene.add(dirLight2);
+
+            // const helper = new THREE.DirectionalLightHelper( dirLight, 1 );
+            // scene.add( helper );
+
+            // const light = new THREE.SpotLight(0xffffff,0.1);
+            // light.angle = Math.PI/2.5
+            // light.position.set(0, 1.6, 0);
+            // light.castShadow = true;
+            // light.shadow.mapSize.set(4096, 4096);
+            // light.penumbra = 0.5;
+            // scene.add(light);            
+
+            const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x222222, 0.5);
+            hemisphereLight.position.set(5, 10, 7.5)
+            scene.add(hemisphereLight);
+
+            // scene.overrideMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+
+			const gridHelper = new THREE.GridHelper( 10, 10 );
+            gridHelper.position.set(0, -1, 0)
+			scene.add( gridHelper );
+
+
+            //glbファイルの読み込み
+            const loader = new GLTFLoader();
+
+            loader.register((parser) => {
+                return new VRMLoaderPlugin(parser);
+            });
+            // let currentVrm = undefined;
+
+            loader.load("../../assets/vrm/AliciaSolid.vrm", (gltf) => {
+                // retrieve a VRM instance from gltf
+                const vrm = gltf.userData.vrm;
+                // calling these functions greatly improves the performance
+				VRMUtils.removeUnnecessaryVertices( gltf.scene );
+				VRMUtils.removeUnnecessaryJoints( gltf.scene );
+
+                // Disable frustum culling
+				vrm.scene.traverse( ( obj ) => {
+                obj.frustumCulled = false;
+                } );
+
+                vrm.scene.position.y = -1;
+
+                // add the loaded vrm to the scene
+                scene.add(vrm.scene);
+                // currentVrm = vrm;
+
+                // deal with vrm features
+                console.log(vrm);
+
+                // vrm.expressions.preset.happy;
+                
+                vrm.expressionManager.setValue('happy', 1.0);
+                vrm.expressionManager.setValue( 'aa', 1.0);
+                vrm.humanoid.getNormalizedBoneNode( 'leftUpperArm' ).rotation.z = 1.1;
+                vrm.humanoid.getNormalizedBoneNode( 'rightUpperArm' ).rotation.z = -1.1;
+
+                vrm.expressionManager.update();
+                vrm.humanoid.update();
+            },
+
+            // called while loading is progressing
+            (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
+
+            // called when loading has errors
+            (error) => console.error(error),
+            );
+
+           
+        function animate() {
+            // let frame;  
+            requestAnimationFrame(animate);
+            // frame++;
+            // if (frame % 2 == 0) {
+		    //     return;
+	        // }
+            const deltaTime = clock.getDelta();
+
+            controls.update();
+            renderer.render(scene, camera);
+            // mixer.update(deltaTime);
+
+        }
+        animate();
+        
+
+        window.addEventListener('resize', onWindowResize);
+ 
+        function onWindowResize() {
+        renderer.setSize(window.innerWidth, window.innerHeight); // レンダラーのサイズをれサイズ対応
+        camera.aspect = window.innerWidth / window.innerHeight; // カメラのアスペクト比をリサイズ対応
+        camera.updateProjectionMatrix(); // カメラを更新した際に呼び出す必要がある
+        }
+     
+    </script>
+</body>
+</html>

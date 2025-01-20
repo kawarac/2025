@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vk</title>
+    <link rel="stylesheet" href="../../css/sanitize.css">
+    <script type="text/JavaScript">
+        document.write('<link href="../../css/style.css?ver='+ new Date().getTime() +'" rel="stylesheet" type="text/css">');
+    </script>
+    <link rel="icon" type="image/svg" href="../../img/00_favicon.svg">
+</head>
+
+<body>
+
+    <div id="WebGL-output">
+    </div>
+
+    <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../../node_modules/three/build/three.module.js",
+                "GLTFLoader": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+                "TrackballControls": "../../node_modules/three/examples/jsm/controls/TrackballControls.js"
+              }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+        import { GLTFLoader } from "GLTFLoader";
+        import { TrackballControls } from "TrackballControls";
+
+        let camera;
+        let scene;
+        let scene2;
+        let renderer;
+        let model;
+        let mesh;
+        let controls;
+        let pointer = new THREE.Vector2();
+        let raycaster = new THREE.Raycaster();
+        let lampSwitch =true;
+        
+
+        
+     
+        
+            //シーンの作成
+            scene = new THREE.Scene();
+            scene2 = new THREE.Scene();
+
+            //レンダラー
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true
+            });
+            // renderer.setClearColor(new THREE.Color(0xffffff));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(THREE.MathUtils.clamp(window.devicePixelRatio, 1, 1.8));
+            renderer.shadowMap.enabled = true;
+            // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            // renderer.gammaInput = true;
+            // renderer.gammaOutput = true;
+            renderer.phisicallyCorrectLights = true;
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+     
+            //カメラの作成
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
+            //カメラセット
+            camera.position.set(-3, 0, 0);
+            // camera.lookAt(new THREE.Vector3(0, 0, 0));
+            
+            // controls
+            controls = new TrackballControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 1.5;
+            controls.zoomSpeed = 0.2;
+            controls.panSpeed = 0.1
+            // controls.enablePan = false;
+            controls.maxDistance = 50;
+            // controls.minDistance = 0.5;
+            // controls.autoRotate = true;
+            // controls.autoRotateSpeed = 0.8;
+     
+            //光源
+            const light = new THREE.SpotLight(0xffbb77,1);//color,強度
+            light.angle = Math.PI /5
+            light.position.set(1, 1.5, 1);
+            // light.target.position.set(1, 0, 1);
+            light.castShadow = true;
+            // light.shadow.mapSize.set(4096, 4096);
+            light.penumbra = 0.5;
+            // light.visible = false;
+            scene.add(light);
+            scene.add(light.target);
+
+            const light2 = new THREE.SpotLight(0xffffff,1);//color,強度
+            light2.angle = Math.PI /7
+            light2.position.set(-2.5, 0.57, -3.11);
+            light2.target.position.set(-2.2, -1, -3.11);
+            light2.castShadow = true;
+            light2.penumbra = 0.5;
+            // light2.visible = false;
+            scene.add(light2);
+            scene.add(light2.target);
+
+            const light3 = new THREE.SpotLight(0xffffff,0.1);//color,強度
+            light3.angle = Math.PI/2.5
+            light3.position.set(-1.6, 0.62, 2.38);
+            light3.target.position.set(-1.6, 0.62, 0);
+            light3.castShadow = true;
+            light3.penumbra = 0.5;
+            // light3.visible = false;
+            scene.add(light3);
+            scene.add(light3.target);
+
+            const hemisphereLight = new THREE.HemisphereLight(0x999999, 0xffffff, 0.5);
+            hemisphereLight.position.set(0.5, 1, 0.75)
+            scene.add(hemisphereLight);
+
+            // const helper1 = new THREE.DirectionalLightHelper( dirLight, 5 );
+            // scene.add( helper1 );
+            // const helper2 = new THREE.DirectionalLightHelper( light, 5 );
+            // scene.add( helper2 );
+
+            // scene.fog = new THREE.Fog(0Xffffff, 1, 10);
+            // scene.overrideMaterial = new THREE.PointsMaterial({color:0x47656d,
+            //     size:6,
+            //     transparent:true,
+            //     opacity:0.5,
+            //     blending:THREE.AdditiveBlending,
+            //     depthTest:false
+            // });
+     
+            const generator = new THREE.PMREMGenerator(renderer);
+            const envMap = generator.fromScene(scene, 0, 0.1, 1000);
+            // envMap.mapping = THREE.CubeRefractionMapping;
+            // envMap.texture.encoding = THREE.sRGBEEncoding;
+     
+            const loader = new GLTFLoader()
+            loader.load('../../assets/gltf/myoukiantaian_joined_remesh.glb',
+            (gltf) => {
+                // the request was successfull
+                let material = new THREE.PointsMaterial({
+                    color:0xffffff,
+                    size:1,
+                    // transparent:true,
+                    // opacity:0.5,
+                    // blending:THREE.AdditiveBlending,
+                    sizeAttenuation: false
+                });
+                mesh = new THREE.Points(gltf.scene.children[0].children[0].geometry, material);
+                scene.add(mesh);
+                mesh.position.set(-1,-1,1.5);
+                console.log(gltf);
+            },
+            (xhr) => {
+                // the request is in progress
+                console.log(xhr)
+            },
+            (err) => {
+                // something went wrong
+                console.error("loading .obj went wrong, ", err)
+            })
+        function animate() {
+
+            // scene2.traverse(function (obj) {
+            //     if (obj instanceof THREE.Mesh == true){
+            //         obj.rotation.y += Math.sign(-1 + 2 * Math.random()) * 0.01;
+            //     }
+            // })
+
+            
+
+            requestAnimationFrame(animate);
+            // const delta = clock.getDelta();
+            controls.update();
+            
+
+
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', onWindowResize);
+ 
+        function onWindowResize() {
+        renderer.setSize(window.innerWidth, window.innerHeight); // レンダラーのサイズをれサイズ対応
+        camera.aspect = window.innerWidth / window.innerHeight; // カメラのアスペクト比をリサイズ対応
+        camera.updateProjectionMatrix(); // カメラを更新した際に呼び出す必要がある
+        }
+     
+    </script>
+</body>
+</html>
