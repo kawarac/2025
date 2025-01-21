@@ -24,7 +24,7 @@ async function loadData() {
 
   data.forEach(entry => {
     if (entry.grade == '') {}else{
-      if (entry.category == 'real') {
+      if (entry.category == 'material') {
         const copy = baseHtml1.cloneNode(true);
         copy.classList.remove('js-base');
         copy.querySelector('.item-name1').textContent = entry.name_jp;
@@ -36,7 +36,7 @@ async function loadData() {
         container1.appendChild(copy);
       };
 
-      if (entry.category == 'coding') {
+      if (entry.category == 'web') {
         const copy = baseHtml2.cloneNode(true);
         copy.classList.remove('js-base');
         copy.querySelector('.item-name2').textContent = entry.name_jp;
