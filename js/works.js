@@ -24,7 +24,7 @@ async function loadData() {
 
   data.forEach(entry => {
     if (entry.grade == '') {}else{
-      if (entry.category == 'material') {
+      if (entry.category == 'make') {
         const copy = baseHtml1.cloneNode(true);
         copy.classList.remove('js-base');
         copy.querySelector('.item-name1').textContent = entry.name_jp;
